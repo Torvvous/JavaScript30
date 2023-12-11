@@ -59,7 +59,38 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  window.addEventListener('keydown', function(event) {
+    // added quotes because the css attribute selector has quotes around the attr value
+    const audio = document.querySelector(`audio[data-key="${event.keyCode}"]`); 
+    const key = document.querySelector(`.key[data-key="${event.keyCode}"]`);
+    // if audio is null bc there's no associated key with sound, return nothing and stop function from running
+    if(!audio) return;
+    // else just console log the results
+    console.log(audio); 
+    console.log(key);
 
+/*  Doesn't work for some reason  
+
+    audio.onplay = function() {
+      alert("The audio has started to play");
+    }  */
+
+    // rewind to the start
+    audio.currentTime = 0;
+    audio.play();
+
+    key.classList.add('playing');
+  });
+
+  function removeTransition(event) {
+    // skip it if it's not a transform
+    if (event.propertyName != 'transform') return;
+    // "this" is the key before ".addEventListener"
+    console.log(this);
+    this.classList.remove('playing');
+  }
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
 </script>
 
 
