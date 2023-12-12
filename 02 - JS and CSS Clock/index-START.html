@@ -107,7 +107,7 @@
       /* returns the function bc without it: function would run only the first time and then 2nd time onwards it would fail as it would turn into setInterval(undefined, 1000) since the argument passed is a function call instead of the function itself */
       return setMinDate;
 
-    }(), 60000 );
+    }(), 1000 );
 
     setInterval( function setHourDate () {
 
@@ -118,7 +118,7 @@
       
       return setHourDate;
 
-    }(), 60000 );
+    }(), 1000 );
 
 
     /* not a great idea to use setInterval every 60 seconds for a minute because then it will not be in sync with the realtime unless the functions start at XX:00 precisely */
