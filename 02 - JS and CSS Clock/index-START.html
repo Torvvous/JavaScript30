@@ -54,7 +54,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
+      transform: translateY(-10px); /* account for the height of the clock hands */
     }
 
     .hand {
@@ -63,12 +63,70 @@
       background: black;
       position: absolute;
       top: 50%;
+      transform-origin: 100%;
+      transform: rotate(90deg); /* (1) */
+      transition: all 0.05s;
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
     }
 
   </style>
 
   <script>
+    const secondHand = document.querySelector('.second-hand');
+    const minuteHand = document.querySelector('.min-hand');
+    const hoursHand = document.querySelector('.hour-hand');
+    
+    /* !! doesn't work from here 
+    The reason: once program is executed, variable 'now' gets assigned the date as of program execution, value assigned doesn't change as it's a global variable so the time stays the same 
+    
+    let now = new Date(); */
 
+    function setDate() {
+
+      /* the reason variable 'now' works here is because there's a new variable constructed whenever function executes, so a new date assigned every x seconds */
+      const now = new Date();
+
+      const seconds = now.getSeconds();
+      // turn seconds into degrees: the reason why it's needed to add another 90 to the result is because even though we rotated all hands 90 degrees at (1), the selection below overwrites the one above from (1) due to specificity, without 90 it starts counting from left to right instead of top to bottom
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      console.log(seconds);
+
+    }
+    setInterval(setDate, 1000);
+
+    /* the function below are self-invoked inside setInterval so they run immediately and then repeat every x seconds*/
+
+    setInterval( function setMinDate() {
+
+      const now = new Date();
+      const minutes = now.getMinutes();
+      const minutesDegrees = ((minutes / 60) * 360) + 90;
+      minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+      
+      /* returns the function bc without it: function would run only the first time and then 2nd time onwards it would fail as it would turn into setInterval(undefined, 1000) since the argument passed is a function call instead of the function itself */
+      return setMinDate;
+
+    }(), 60000 );
+
+    setInterval( function setHourDate () {
+
+      const now = new Date();
+      const hours = now.getHours();
+      const hoursDegrees = ((hours / 12) * 360) + 90;
+      hoursHand.style.transform = `rotate(${hoursDegrees}deg)`;
+      
+      return setHourDate;
+
+    }(), 60000 );
+
+
+    /* not a great idea to use setInterval every 60 seconds for a minute because then it will not be in sync with the realtime unless the functions start at XX:00 precisely */
+
+    /* setMinDate();  
+    setInterval(setMinDate, 60000); */
+    /* setHourDate();
+    setInterval(setHourDate, 60000); */
 
   </script>
 </body>
