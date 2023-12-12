@@ -23,6 +23,22 @@
 
   <style>
 
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 1px;
+    }
+
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
+
     /*
       misc styles, nothing to do with CSS variables
     */
@@ -46,6 +62,21 @@
   </style>
 
   <script>
+    const inputs = document.querySelectorAll('.controls input');
+
+    function handleUpdate() {
+      /* console.log(this.value); */
+
+      /* takes px unit from data-sizing to append it to variable values or append nothing for the color */
+      const suffix = this.dataset.sizing || '';
+      /* append the attributes to HTML element, so that it applies to all elements that have the variables, also this way specific ones can be overwritten as specificity on classes or IDs will be higher than for HTML*/
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+    }
+
+    /* whenever there's a change in the forum sliders/color apply the function handleUpdate*/
+    inputs.forEach(input => input.addEventListener('change', handleUpdate));
+    /* since the 'change' event listener type doesn't trigger often/quick, the mousemove one will make the transition smooth as it triggers every mousemove*/
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
   </script>
 
 </body>
