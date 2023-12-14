@@ -97,6 +97,68 @@
   </div>
 
 <script>
+
+  const checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]');
+  console.log(checkboxes);
+
+  let lastChecked;
+
+  /* only works if clicking on a checkbox first (without holding shift) and then holding shift + click on a new checkbox because clicking first time -> <this> gets assigned the checkbox element to (2) and <this> from (1) is the checkbox element from when we hold shift + click on a new checkbox element - second click doesn't assign to (2) because it goes through checkboxes.forEach loop first, it only gets assigned after forEach is done with the loop */
+
+  /* bug: if clicking a checkbox while holding shift it's going to check all boxes below */
+
+  /* UPDATE: fixed bug from original solution but now it only works for top-to-bottom selection, bottom-to-top selection is broken */
+
+  function handleCheck(e) {
+    
+    let inBetween = false;
+    
+    if ( (e.shiftKey && this.checked) || this.checked ) {
+    
+        if(!lastChecked) {
+          lastChecked = this;
+          console.log(lastChecked);
+        } else {
+
+        checkboxes.forEach(checkbox => {
+          /* console.log(checkbox); */
+          if (checkbox === this || checkbox === lastChecked) { // (1)
+            
+            inBetween = !inBetween;
+          
+            // once reaching the "closing" (second) checkbox reset lastChecked to undefined 
+            if (checkbox === this) {
+              lastChecked = undefined;
+            }
+
+            /*  tried to bug fix selection from bottom-to-top but sadly this messes up the top-to-bottom selection, therefore this solution isn't reliable 
+
+              if (checkbox === lastChecked) {
+              var LCindex = index;
+            }
+
+            if (checkbox === this) {
+              let CCindex = index;
+              if (CCindex > LCindex) {
+                lastChecked = undefined;
+              }
+            } */
+          }
+
+          if (inBetween) {
+
+            checkbox.checked = true;
+            /* console.log(lastChecked); */
+          }
+        });
+      }
+  }
+    /* lastChecked = this; */ // (2)
+    /* console.log(lastChecked); */
+  }
+
+  checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleCheck));
+  
 </script>
 </body>
 </html>
